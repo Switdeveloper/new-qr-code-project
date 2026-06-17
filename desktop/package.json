@@ -1,0 +1,37 @@
+{
+  "name": "school-fees-qr",
+  "version": "1.0.0",
+  "description": "Offline School Fees Recording & Verification System with QR Code",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder build --win --config build.config.json",
+    "build-portable": "electron-builder build --win portable --config build.config.json"
+  },
+  "build": {
+    "appId": "com.schoolfees.qr",
+    "productName": "School Fees QR",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": ["nsis", "portable"],
+      "icon": null
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "jsqr.js"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0"
+  }
+}
