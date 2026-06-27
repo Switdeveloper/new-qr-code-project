@@ -77,7 +77,10 @@
         <p class="text-xs text-gray-400">School Fees Recording System</p>
       </div>
     </div>
-    <div class="flex items-center gap-2 text-sm">
+    <div class="flex items-center gap-3 text-sm">
+      <span id="lastUpdateBadge" class="hidden md:flex items-center gap-1.5 text-gray-500" title="Last data change">
+        <i class="fas fa-clock text-xs"></i> <span id="lastUpdateText">never</span>
+      </span>
       <span id="onlineStatus" class="flex items-center gap-1.5 text-gray-400">
         <i class="fas fa-circle text-xs text-green-500"></i> Online
       </span>
@@ -135,6 +138,10 @@
           </div>
           <p class="text-3xl font-bold" id="dashPendingPayments">0</p>
         </div>
+      </div>
+      <div class="bg-card rounded-xl p-3 mb-6 reveal reveal-delay-1 flex flex-wrap items-center justify-between gap-2 text-xs text-gray-500">
+        <span><i class="fas fa-database text-accent mr-1"></i> <span id="dashDataSummary">No records</span></span>
+        <span><i class="fas fa-history mr-1"></i> Last updated: <span id="dashLastUpdated">never</span></span>
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-card rounded-xl p-5 reveal reveal-delay-2">
@@ -501,6 +508,41 @@ class SchoolDB {
 
 const db = new SchoolDB();
 
+// ===== Last Updated Tracker =====
+function touchLastUpdated() {
+  const now = new Date().toISOString();
+  localStorage.setItem('kwarapoly_last_updated', now);
+  updateLastUpdatedUI();
+}
+
+function getLastUpdated() {
+  return localStorage.getItem('kwarapoly_last_updated') || null;
+}
+
+function updateLastUpdatedUI() {
+  const stored = getLastUpdated();
+  const el = document.getElementById('lastUpdateText');
+  const dashEl = document.getElementById('dashLastUpdated');
+  const val = stored ? timeAgo(stored) : 'never';
+  if (el) el.textContent = val;
+  if (dashEl) dashEl.textContent = val;
+}
+
+function timeAgo(isoString) {
+  if (!isoString) return 'never';
+  const now = new Date();
+  const then = new Date(isoString);
+  const sec = Math.floor((now - then) / 1000);
+  if (sec < 10) return 'just now';
+  if (sec < 60) return sec + 's ago';
+  const min = Math.floor(sec / 60);
+  if (min < 60) return min + 'm ago';
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return hr + 'h ago';
+  const days = Math.floor(hr / 24);
+  return days + 'd ago';
+}
+
 // ===== Toast =====
 function showToast(msg, type = 'success') {
   const t = document.getElementById('toast');
@@ -543,6 +585,11 @@ async function loadDashboard() {
         '</div>'
       ).join('') + '</div>';
     }
+
+    document.getElementById('dashDataSummary').textContent =
+      stats.totalStudents + ' student' + (stats.totalStudents !== 1 ? 's' : '') +
+      ' · ' + stats.termPaymentsCount + ' payment' + (stats.termPaymentsCount !== 1 ? 's' : '') + ' this term';
+    updateLastUpdatedUI();
 
     const so = document.getElementById('dashStudentOverview');
     if (stats.students.length === 0) {
@@ -627,6 +674,7 @@ async function saveStudent(e) {
       await db.addStudent(data);
       showToast('Student added successfully.');
     }
+    touchLastUpdated();
     closeStudentModal();
     loadStudents();
     loadPaymentForm();
@@ -646,6 +694,7 @@ async function deleteStudent(id) {
   if (!confirm('Delete this student? This does NOT delete their payment records.')) return;
   try {
     await db.deleteStudent(id);
+    touchLastUpdated();
     showToast('Student deleted.');
     loadStudents();
     loadPaymentForm();
@@ -693,6 +742,7 @@ async function recordPayment(e) {
       created_at: new Date().toISOString()
     };
     await db.addPayment(payment);
+    touchLastUpdated();
     showToast('Payment recorded successfully!');
     document.getElementById('paymentForm').reset();
     document.getElementById('payDate').value = new Date().toISOString().split('T')[0];
@@ -974,6 +1024,7 @@ updateOnlineStatus();
     console.error('Failed to open KwarapolyFeesDB:', e);
     showToast('Failed to initialize database.', 'error');
   }
+  updateLastUpdatedUI();
   loadDashboard();
   loadPaymentForm();
 })();
