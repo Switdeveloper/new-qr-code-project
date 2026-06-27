@@ -17,7 +17,7 @@ app.whenReady().then(() => {
     height: 800,
     minWidth: 900,
     minHeight: 600,
-    title: 'School Fees QR',
+    title: 'Kwara Poly Fees',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,

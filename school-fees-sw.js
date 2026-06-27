@@ -1,7 +1,8 @@
-const CACHE = 'school-fees-v1';
+const CACHE = 'kwarapoly-fees-v1';
 const URLS = [
   'school-fees.html',
   'school-fees-manifest.json',
+  'kwarapoly-logo.png',
   'https://cdn.tailwindcss.com',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',

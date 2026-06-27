@@ -1,7 +1,7 @@
 {
-  "name": "school-fees-qr",
+  "name": "kwara-poly-fees",
   "version": "1.0.0",
-  "description": "Offline School Fees Recording & Verification System with QR Code",
+  "description": "Kwara State Polytechnic - Offline School Fees Recording & Verification System with QR Code",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -9,8 +9,8 @@
     "build-portable": "electron-builder build --win portable --config build.config.json"
   },
   "build": {
-    "appId": "com.schoolfees.qr",
-    "productName": "School Fees QR",
+    "appId": "com.kwarapoly.fees",
+    "productName": "Kwara Poly Fees",
     "directories": {
       "output": "dist"
     },

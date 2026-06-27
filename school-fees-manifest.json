@@ -1,15 +1,15 @@
 {
-  "name": "School Fees System",
-  "short_name": "School Fees",
+  "name": "Kwara State Polytechnic - School Fees",
+  "short_name": "Kwarapoly Fees",
   "start_url": "school-fees.html",
   "display": "standalone",
-  "background_color": "#0d152e",
-  "theme_color": "#c91414",
+  "background_color": "#030",
+  "theme_color": "#339933",
   "icons": [
     {
-      "src": "https://switdeveloper.github.io/Swit-invest/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
+      "src": "kwarapoly-logo.png",
+      "sizes": "140x140",
+      "type": "image/png"
     }
   ]
 }

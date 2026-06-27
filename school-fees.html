@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>School Fees System</title>
+  <title>Kwara State Polytechnic - School Fees System</title>
   <link rel="manifest" href="school-fees-manifest.json">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -11,18 +11,18 @@
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0d152e; color: #e2e8f0; min-height: 100vh; }
-    .bg-primary { background-color: #0d152e; }
-    .bg-accent { background-color: #c91414; }
-    .text-accent { color: #c91414; }
-    .border-accent { border-color: #c91414; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #030; color: #e2e8f0; min-height: 100vh; }
+    .bg-primary { background-color: #030; }
+    .bg-accent { background-color: #339933; }
+    .text-accent { color: #339933; }
+    .border-accent { border-color: #339933; }
     .bg-card { background-color: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
-    .btn-accent { background: #c91414; color: #fff; transition: all 0.3s ease; }
-    .btn-accent:hover { background: #a01010; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(201,20,20,0.4); }
+    .btn-accent { background: #339933; color: #fff; transition: all 0.3s ease; }
+    .btn-accent:hover { background: #196819; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(51,153,51,0.4); }
     .btn-outline { border: 1px solid rgba(255,255,255,0.2); color: #e2e8f0; transition: all 0.3s ease; }
-    .btn-outline:hover { border-color: #c91414; color: #c91414; }
+    .btn-outline:hover { border-color: #339933; color: #339933; }
     .nav-btn { transition: all 0.3s ease; cursor: pointer; border-bottom: 2px solid transparent; }
-    .nav-btn.active { color: #c91414; border-bottom-color: #c91414; }
+    .nav-btn.active { color: #339933; border-bottom-color: #339933; }
     .nav-btn:not(.active):hover { color: #94a3b8; border-bottom-color: #94a3b8; }
     .view { display: none; animation: fadeIn 0.4s ease; }
     .view.active { display: block; }
@@ -33,31 +33,32 @@
     .reveal-delay-3 { animation-delay: 0.3s; }
     .reveal-delay-4 { animation-delay: 0.4s; }
     .stat-card { transition: all 0.3s ease; }
-    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(201,20,20,0.2); }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(51,153,51,0.2); }
     input, select, textarea { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #e2e8f0; border-radius: 0.5rem; padding: 0.625rem 1rem; width: 100%; outline: none; transition: all 0.3s ease; }
-    input:focus, select:focus, textarea:focus { border-color: #c91414; box-shadow: 0 0 0 3px rgba(201,20,20,0.2); }
-    select option { background: #0d152e; color: #e2e8f0; }
+    input:focus, select:focus, textarea:focus { border-color: #339933; box-shadow: 0 0 0 3px rgba(51,153,51,0.2); }
+    select option { background: #030; color: #e2e8f0; }
     table { width: 100%; border-collapse: collapse; }
     th { text-align: left; padding: 0.75rem 1rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; border-bottom: 1px solid rgba(255,255,255,0.1); }
     td { padding: 0.75rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
     tr:hover td { background: rgba(255,255,255,0.03); }
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 50; animation: fadeIn 0.3s ease; }
     .modal-overlay.active { display: flex; }
-    .modal-content { background: #1a1f3a; border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem; padding: 2rem; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
+    .modal-content { background: #0a1a0a; border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem; padding: 2rem; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
     .toast { position: fixed; bottom: 2rem; right: 2rem; padding: 1rem 1.5rem; border-radius: 0.75rem; color: #fff; font-weight: 500; transform: translateY(100px); opacity: 0; transition: all 0.4s ease; z-index: 100; max-width: 400px; }
     .toast.show { transform: translateY(0); opacity: 1; }
     .toast.success { background: #16a34a; }
     .toast.error { background: #dc2626; }
     .toast.info { background: #2563eb; }
     .receipt { background: #fff; color: #1a202c; border-radius: 0.75rem; padding: 1.5rem; font-family: 'Courier New', monospace; }
-    .receipt h3 { color: #c91414; font-weight: 700; }
+    .receipt h3 { color: #339933; font-weight: 700; }
     #scanner video { border-radius: 0.75rem; width: 100%; max-width: 500px; }
     #scanner canvas { display: none; }
     .badge-pending { background: rgba(234,179,8,0.15); color: #eab308; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
     .badge-paid { background: rgba(22,163,74,0.15); color: #22c55e; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
     ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0d152e; }
-    ::-webkit-scrollbar-thumb { background: #c91414; border-radius: 3px; }
+    ::-webkit-scrollbar-track { background: #030; }
+    ::-webkit-scrollbar-thumb { background: #339933; border-radius: 3px; }
+    .logo-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.15); }
     @media (max-width: 768px) {
       .nav-btn span { display: none; }
       .stat-card { padding: 1rem; }
@@ -70,10 +71,10 @@
 <div id="app" class="min-h-screen flex flex-col">
   <header class="bg-card border-b border-white/10 px-4 py-3 flex items-center justify-between sticky top-0 z-40 backdrop-blur-xl">
     <div class="flex items-center gap-3">
-      <i class="fas fa-graduation-cap text-accent text-2xl"></i>
+      <img src="kwarapoly-logo.png" alt="Kwara Poly Logo" class="logo-img">
       <div>
-        <h1 class="text-lg font-bold text-white leading-tight">School Fees</h1>
-        <p class="text-xs text-gray-400">Offline Recording System</p>
+        <h1 class="text-lg font-bold text-white leading-tight">Kwara State Polytechnic</h1>
+        <p class="text-xs text-gray-400">School Fees Recording System</p>
       </div>
     </div>
     <div class="flex items-center gap-2 text-sm">
@@ -160,9 +161,9 @@
           <table id="studentsTable">
             <thead>
               <tr>
-                <th>Admission No</th>
+                <th>Matric No</th>
                 <th>Name</th>
-                <th>Class</th>
+                <th>Department</th>
                 <th>Parent</th>
                 <th>Phone</th>
                 <th class="text-right">Actions</th>
@@ -270,8 +271,8 @@
             <input type="text" id="searchName" placeholder="Search by name">
           </div>
           <div>
-            <label class="block text-sm font-medium mb-1.5 text-gray-300">Admission No</label>
-            <input type="text" id="searchAdmission" placeholder="e.g. ADM-001">
+            <label class="block text-sm font-medium mb-1.5 text-gray-300">Matric No</label>
+            <input type="text" id="searchAdmission" placeholder="e.g. ND/COM/2024/001">
           </div>
           <div>
             <label class="block text-sm font-medium mb-1.5 text-gray-300">From Date</label>
@@ -309,7 +310,7 @@
   </main>
 
   <footer class="bg-card border-t border-white/10 px-4 py-3 text-center text-xs text-gray-500">
-    &copy; 2026 Swit Invest &middot; Offline School Fees System
+    &copy; 2026 Kwara State Polytechnic, Ilorin &middot; Technology, Innovation and Service
   </footer>
 </div>
 
@@ -323,16 +324,16 @@
     <form id="studentForm" onsubmit="return saveStudent(event)">
       <input type="hidden" id="studentId">
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1.5 text-gray-300">Admission No</label>
-        <input type="text" id="stuAdmission" required placeholder="e.g. ADM-001">
+        <label class="block text-sm font-medium mb-1.5 text-gray-300">Matric No</label>
+        <input type="text" id="stuAdmission" required placeholder="e.g. ND/COM/2024/001">
       </div>
       <div class="mb-4">
         <label class="block text-sm font-medium mb-1.5 text-gray-300">Full Name</label>
         <input type="text" id="stuName" required placeholder="e.g. John Doe">
       </div>
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1.5 text-gray-300">Class</label>
-        <input type="text" id="stuClass" required placeholder="e.g. SS1A">
+        <label class="block text-sm font-medium mb-1.5 text-gray-300">Department</label>
+        <input type="text" id="stuClass" required placeholder="e.g. Computer Science">
       </div>
       <div class="mb-4">
         <label class="block text-sm font-medium mb-1.5 text-gray-300">Parent Name</label>
@@ -372,7 +373,7 @@
 class SchoolDB {
   constructor() {
     this.db = null;
-    this.DB_NAME = 'SchoolFeesDB';
+    this.DB_NAME = 'KwarapolyFeesDB';
     this.DB_VERSION = 1;
   }
 
@@ -679,7 +680,7 @@ async function recordPayment(e) {
     const student = await db.getStudent(studentId);
     if (!student) { showToast('Student not found.', 'error'); return; }
 
-    const receiptNo = 'RCP-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+    const receiptNo = 'KWP-RCP-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
     const payment = {
       student_id: Number(studentId),
       student_name: student.name,
@@ -718,13 +719,15 @@ function generateReceiptQR(payment, student) {
   container.innerHTML = `
     <div class="receipt" id="receiptPreview">
       <div class="text-center border-b border-gray-300 pb-3 mb-3">
-        <h3 class="text-lg font-bold">SCHOOL FEES RECEIPT</h3>
-        <p class="text-xs text-gray-600">Offline School Fees System</p>
+        <img src="kwarapoly-logo.png" alt="Kwara Poly Logo" style="width:36px;height:36px;border-radius:50%;margin-bottom:4px;">
+        <h3 class="text-lg font-bold" style="color:#339933;">KWARA STATE POLYTECHNIC</h3>
+        <p class="text-xs text-gray-600">Technology, Innovation and Service</p>
+        <p class="text-sm font-semibold mt-1" style="color:#339933;">SCHOOL FEES RECEIPT</p>
       </div>
       <div class="text-sm space-y-1.5 mb-3">
         <div class="flex justify-between"><span class="font-semibold">Receipt No:</span><span>${escHtml(payment.receipt_no)}</span></div>
         <div class="flex justify-between"><span class="font-semibold">Student:</span><span>${escHtml(student.name)}</span></div>
-        <div class="flex justify-between"><span class="font-semibold">Class:</span><span>${escHtml(student.class)}</span></div>
+        <div class="flex justify-between"><span class="font-semibold">Department:</span><span>${escHtml(student.class)}</span></div>
         <div class="flex justify-between"><span class="font-semibold">Amount:</span><span>\u20A6${Number(payment.amount).toLocaleString()}</span></div>
         <div class="flex justify-between"><span class="font-semibold">Term:</span><span>${escHtml(payment.term)}</span></div>
         <div class="flex justify-between"><span class="font-semibold">Session:</span><span>${escHtml(payment.session)}</span></div>
@@ -966,9 +969,9 @@ updateOnlineStatus();
 (async function init() {
   try {
     await db.open();
-    console.log('SchoolDB opened successfully.');
+    console.log('KwarapolyFeesDB opened successfully.');
   } catch (e) {
-    console.error('Failed to open SchoolDB:', e);
+    console.error('Failed to open KwarapolyFeesDB:', e);
     showToast('Failed to initialize database.', 'error');
   }
   loadDashboard();
