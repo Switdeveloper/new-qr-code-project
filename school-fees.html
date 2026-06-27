@@ -64,45 +64,11 @@
       .stat-card { padding: 1rem; }
       .modal-content { padding: 1.5rem; }
     }
-    .login-screen { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; background: #030; }
-    .login-screen.hidden { display: none; }
-    .login-box { background: #0a1a0a; border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem; padding: 2.5rem; max-width: 400px; width: 90%; text-align: center; }
-    .login-box .logo { width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 1rem; border: 3px solid rgba(51,153,51,0.3); }
-    .login-box h2 { font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
-    .login-box p { font-size: 0.8rem; color: #6b7280; margin-bottom: 1.5rem; }
-    .login-box input { margin-bottom: 0.75rem; }
-    .login-box .error { color: #ef4444; font-size: 0.8rem; min-height: 1.2rem; margin-bottom: 0.5rem; }
-    .login-box .switch-link { color: #6b7280; font-size: 0.8rem; cursor: pointer; margin-top: 0.75rem; display: inline-block; }
-    .login-box .switch-link:hover { color: #339933; }
   </style>
 </head>
 <body>
 
-<!-- LOGIN / SETUP SCREEN -->
-<div id="loginScreen" class="login-screen">
-  <div class="login-box">
-    <img src="kwarapoly-logo.png" alt="Kwara Poly Logo" class="logo">
-    <h2>Kwara State Polytechnic</h2>
-    <p>School Fees Recording System</p>
-    <div id="loginMode">
-      <div id="loginForm">
-        <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="off">
-        <div class="error" id="loginError"></div>
-        <button class="btn-accent w-full py-3 rounded-lg font-semibold" onclick="handleLogin()">Login</button>
-        <a class="switch-link" onclick="showSetup()">First time? Set up a password</a>
-      </div>
-      <div id="setupForm" style="display:none">
-        <input type="password" id="setupPassword" placeholder="New password (min 4 chars)" autocomplete="off">
-        <input type="password" id="setupConfirm" placeholder="Confirm password" autocomplete="off">
-        <div class="error" id="setupError"></div>
-        <button class="btn-accent w-full py-3 rounded-lg font-semibold" onclick="handleSetup()">Set Up &amp; Enter</button>
-        <a class="switch-link" onclick="showLogin()">Already have a password? Login</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="app" class="min-h-screen flex-col" style="display:none">
+<div id="app" class="min-h-screen flex flex-col">
   <header class="bg-card border-b border-white/10 px-4 py-3 flex items-center justify-between sticky top-0 z-40 backdrop-blur-xl">
     <div class="flex items-center gap-3">
       <img src="kwarapoly-logo.png" alt="Kwara Poly Logo" class="logo-img">
@@ -1049,98 +1015,18 @@ window.addEventListener('online', updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
 updateOnlineStatus();
 
-// ===== Login / Setup =====
-function getStoredHash() {
-  return localStorage.getItem('kwarapoly_password_hash');
-}
-
-function setStoredHash(hash) {
-  localStorage.setItem('kwarapoly_password_hash', hash);
-}
-
-function isFirstTime() {
-  return !getStoredHash();
-}
-
-function showLogin() {
-  document.getElementById('loginForm').style.display = 'block';
-  document.getElementById('setupForm').style.display = 'none';
-  document.getElementById('loginError').textContent = '';
-  document.getElementById('loginPassword').value = '';
-  document.getElementById('loginPassword').focus();
-}
-
-function showSetup() {
-  document.getElementById('loginForm').style.display = 'none';
-  document.getElementById('setupForm').style.display = 'block';
-  document.getElementById('setupError').textContent = '';
-  document.getElementById('setupPassword').value = '';
-  document.getElementById('setupConfirm').value = '';
-  document.getElementById('setupPassword').focus();
-}
-
-async function hashPassword(pw) {
-  const enc = new TextEncoder().encode(pw);
-  const buf = await crypto.subtle.digest('SHA-256', enc);
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-function unlockApp() {
-  document.getElementById('loginScreen').classList.add('hidden');
-  document.getElementById('app').style.display = 'flex';
-  initApp();
-}
-
-async function handleLogin() {
-  const pw = document.getElementById('loginPassword').value;
-  const err = document.getElementById('loginError');
-  if (!pw) { err.textContent = 'Enter your password.'; return; }
-  const hash = await hashPassword(pw);
-  if (hash === getStoredHash()) {
-    err.textContent = '';
-    unlockApp();
-  } else {
-    err.textContent = 'Wrong password.';
-  }
-}
-
-async function handleSetup() {
-  const pw = document.getElementById('setupPassword').value;
-  const confirm = document.getElementById('setupConfirm').value;
-  const err = document.getElementById('setupError');
-  if (!pw || pw.length < 4) { err.textContent = 'Password must be at least 4 characters.'; return; }
-  if (pw !== confirm) { err.textContent = 'Passwords do not match.'; return; }
-  const hash = await hashPassword(pw);
-  setStoredHash(hash);
-  err.textContent = '';
-  unlockApp();
-}
-
-let appInited = false;
-function initApp() {
-  if (appInited) return;
-  appInited = true;
-  (async function () {
-    try {
-      await db.open();
-      console.log('KwarapolyFeesDB opened successfully.');
-    } catch (e) {
-      console.error('Failed to open KwarapolyFeesDB:', e);
-      showToast('Failed to initialize database.', 'error');
-    }
-    updateLastUpdatedUI();
-    loadDashboard();
-    loadPaymentForm();
-  })();
-}
-
 // ===== Init =====
-(function () {
-  if (isFirstTime()) {
-    showSetup();
-  } else {
-    showLogin();
+(async function init() {
+  try {
+    await db.open();
+    console.log('KwarapolyFeesDB opened successfully.');
+  } catch (e) {
+    console.error('Failed to open KwarapolyFeesDB:', e);
+    showToast('Failed to initialize database.', 'error');
   }
+  updateLastUpdatedUI();
+  loadDashboard();
+  loadPaymentForm();
 })();
 
 // ===== Service Worker Registration =====

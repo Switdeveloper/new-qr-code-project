@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kwara State Polytechnic - Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #030; color: #e2e8f0; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
+    .login-box { background: #0a1a0a; border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem; padding: 2.5rem; max-width: 400px; width: 90%; text-align: center; }
+    .login-box .logo-img { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 1rem; border: 3px solid rgba(51,153,51,0.3); display: block; }
+    .login-box h1 { font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+    .login-box .motto { font-size: 0.75rem; color: #4b5563; margin-bottom: 0.25rem; }
+    .login-box .subtitle { font-size: 0.8rem; color: #6b7280; margin-bottom: 1.5rem; }
+    .login-box input { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #e2e8f0; border-radius: 0.5rem; padding: 0.75rem 1rem; width: 100%; outline: none; transition: all 0.3s ease; margin-bottom: 0.75rem; }
+    .login-box input:focus { border-color: #339933; box-shadow: 0 0 0 3px rgba(51,153,51,0.2); }
+    .login-box .error { color: #ef4444; font-size: 0.8rem; min-height: 1.2rem; margin-bottom: 0.5rem; }
+    .login-box .switch-link { color: #6b7280; font-size: 0.8rem; cursor: pointer; margin-top: 0.75rem; display: inline-block; }
+    .login-box .switch-link:hover { color: #339933; }
+    .btn-accent { background: #339933; color: #fff; transition: all 0.3s ease; border: none; cursor: pointer; }
+    .btn-accent:hover { background: #196819; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(51,153,51,0.4); }
+  </style>
+</head>
+<body>
+<div class="login-box">
+  <img src="kwarapoly-logo.png" alt="Kwara Poly Logo" class="logo-img">
+  <h1>Kwara State Polytechnic</h1>
+  <div class="motto">Technology, Innovation and Service</div>
+  <div class="subtitle">School Fees Recording System</div>
+
+  <div id="loginForm">
+    <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="off">
+    <div class="error" id="loginError"></div>
+    <button class="btn-accent w-full py-3 rounded-lg font-semibold" onclick="handleLogin()">Login</button>
+    <a class="switch-link" onclick="showSetup()">First time? Set up a password</a>
+  </div>
+
+  <div id="setupForm" style="display:none">
+    <input type="password" id="setupPassword" placeholder="New password (min 4 chars)" autocomplete="off">
+    <input type="password" id="setupConfirm" placeholder="Confirm password" autocomplete="off">
+    <div class="error" id="setupError"></div>
+    <button class="btn-accent w-full py-3 rounded-lg font-semibold" onclick="handleSetup()">Set Up &amp; Enter</button>
+    <a class="switch-link" onclick="showLogin()">Already have a password? Login</a>
+  </div>
+</div>
+
+<script>
+function getStoredHash() { return localStorage.getItem('kwarapoly_password_hash'); }
+function setStoredHash(hash) { localStorage.setItem('kwarapoly_password_hash', hash); }
+function isFirstTime() { return !getStoredHash(); }
+
+function showLogin() {
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('setupForm').style.display = 'none';
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginPassword').focus();
+}
+
+function showSetup() {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('setupForm').style.display = 'block';
+  document.getElementById('setupError').textContent = '';
+  document.getElementById('setupPassword').value = '';
+  document.getElementById('setupConfirm').value = '';
+  document.getElementById('setupPassword').focus();
+}
+
+async function hashPassword(pw) {
+  const enc = new TextEncoder().encode(pw);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function goToApp() {
+  window.location.href = 'school-fees.html';
+}
+
+async function handleLogin() {
+  const pw = document.getElementById('loginPassword').value;
+  const err = document.getElementById('loginError');
+  if (!pw) { err.textContent = 'Enter your password.'; return; }
+  const hash = await hashPassword(pw);
+  if (hash === getStoredHash()) {
+    goToApp();
+  } else {
+    err.textContent = 'Wrong password.';
+  }
+}
+
+async function handleSetup() {
+  const pw = document.getElementById('setupPassword').value;
+  const confirm = document.getElementById('setupConfirm').value;
+  const err = document.getElementById('setupError');
+  if (!pw || pw.length < 4) { err.textContent = 'Password must be at least 4 characters.'; return; }
+  if (pw !== confirm) { err.textContent = 'Passwords do not match.'; return; }
+  setStoredHash(await hashPassword(pw));
+  goToApp();
+}
+
+if (isFirstTime()) { showSetup(); } else { showLogin(); }
+</script>
+</body>
+</html>

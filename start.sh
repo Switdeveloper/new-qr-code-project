@@ -11,7 +11,7 @@ echo "  KWARA STATE POLYTECHNIC, ILORIN"
 echo "  School Fees Recording System"
 echo -e "${RESET}"
 
-FILE="school-fees.html"
+FILE="login.html"
 
 case "$(uname)" in
   Linux)
