@@ -639,9 +639,9 @@ async function loadStudents() {
         '<td>' + escHtml(s.class) + '</td>' +
         '<td>' + escHtml(s.parent_name) + '</td>' +
         '<td>' + escHtml(s.phone) + '</td>' +
-        '<td class="text-right">' +
-          '<button onclick="viewStudentReceipts(' + s.id + ')" class="text-accent hover:text-green-300 mr-3" title="Receipts"><i class="fas fa-receipt"></i></button>' +
-          '<button onclick="editStudent(' + s.id + ')" class="text-blue-400 hover:text-blue-300 mr-3" title="Edit"><i class="fas fa-edit"></i></button>' +
+        '<td class="text-right whitespace-nowrap">' +
+          '<button onclick="viewStudentReceipts(' + s.id + ')" class="btn-accent px-2.5 py-1.5 rounded-lg text-xs font-semibold mr-2" title="View Receipts"><i class="fas fa-receipt mr-1"></i>Receipts</button>' +
+          '<button onclick="editStudent(' + s.id + ')" class="text-blue-400 hover:text-blue-300 mr-2" title="Edit"><i class="fas fa-edit"></i></button>' +
           '<button onclick="deleteStudent(' + s.id + ')" class="text-red-400 hover:text-red-300" title="Delete"><i class="fas fa-trash"></i></button>' +
         '</td>' +
       '</tr>'
