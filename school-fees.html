@@ -372,6 +372,17 @@
   </div>
 </div>
 
+<!-- STUDENT RECEIPTS MODAL -->
+<div id="receiptsModal" class="modal-overlay">
+  <div class="modal-content" style="max-width:600px;">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold text-white" id="receiptsModalTitle">Payment Receipts</h3>
+      <button onclick="closeReceiptsModal()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
+    </div>
+    <div id="receiptsList" class="text-sm text-gray-400">Loading...</div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast" class="toast"></div>
 
@@ -628,6 +639,7 @@ async function loadStudents() {
         '<td>' + escHtml(s.parent_name) + '</td>' +
         '<td>' + escHtml(s.phone) + '</td>' +
         '<td class="text-right">' +
+          '<button onclick="viewStudentReceipts(' + s.id + ')" class="text-accent hover:text-green-300 mr-3" title="Receipts"><i class="fas fa-receipt"></i></button>' +
           '<button onclick="editStudent(' + s.id + ')" class="text-blue-400 hover:text-blue-300 mr-3" title="Edit"><i class="fas fa-edit"></i></button>' +
           '<button onclick="deleteStudent(' + s.id + ')" class="text-red-400 hover:text-red-300" title="Delete"><i class="fas fa-trash"></i></button>' +
         '</td>' +
@@ -699,6 +711,57 @@ async function deleteStudent(id) {
     loadStudents();
     loadPaymentForm();
   } catch (e) { showToast('Error deleting student.', 'error'); }
+}
+
+// ===== Student Receipts =====
+async function viewStudentReceipts(studentId) {
+  try {
+    const student = await db.getStudent(studentId);
+    const payments = await db.getPaymentsByStudent(studentId);
+    const title = 'Receipts - ' + escHtml(student.name);
+    document.getElementById('receiptsModalTitle').textContent = title;
+    const list = document.getElementById('receiptsList');
+
+    if (payments.length === 0) {
+      list.innerHTML = '<div class="flex flex-col items-center py-8 text-gray-500"><i class="fas fa-receipt text-4xl mb-3"></i><p>No payment receipts for this student.</p></div>';
+    } else {
+      let total = 0;
+      list.innerHTML = '<div class="space-y-2">' +
+        payments.sort((a, b) => new Date(b.date) - new Date(a.date)).map(p => {
+          total += Number(p.amount);
+          return '<div class="flex items-center justify-between py-2.5 border-b border-white/5">' +
+            '<div>' +
+              '<div class="font-medium text-white">' + escHtml(p.receipt_no) + '</div>' +
+              '<div class="text-xs text-gray-500">\u20A6' + Number(p.amount).toLocaleString() + ' &middot; ' + escHtml(p.term) + ' Term &middot; ' + escHtml(p.session) + ' &middot; ' + p.date + '</div>' +
+            '</div>' +
+            '<button onclick="showReceiptByPayment(' + p.id + ')" class="btn-accent px-3 py-1.5 rounded-lg text-xs font-semibold"><i class="fas fa-eye mr-1"></i> View</button>' +
+          '</div>';
+        }).join('') +
+        '<div class="flex justify-between pt-2 font-semibold text-white"><span>Total Paid</span><span class="text-accent">\u20A6' + total.toLocaleString() + '</span></div>' +
+      '</div>';
+    }
+    document.getElementById('receiptsModal').classList.add('active');
+  } catch (e) {
+    showToast('Error loading receipts.', 'error');
+  }
+}
+
+function closeReceiptsModal() {
+  document.getElementById('receiptsModal').classList.remove('active');
+}
+
+async function showReceiptByPayment(paymentId) {
+  try {
+    const payments = await db.getPayments();
+    const payment = payments.find(p => p.id === paymentId);
+    if (!payment) { showToast('Payment not found.', 'error'); return; }
+    const student = await db.getStudent(payment.student_id);
+    if (!student) { showToast('Student not found.', 'error'); return; }
+    closeReceiptsModal();
+    generateReceiptQR(payment, student);
+  } catch (e) {
+    showToast('Error loading receipt.', 'error');
+  }
 }
 
 // ===== Record Payment =====
